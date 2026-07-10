@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "Rohit@QaZ",
+    "database": "Flight_Search_DB_DEV",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "Flight_Search_DB_TEST",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "Flight_Search_DB_PROD",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
