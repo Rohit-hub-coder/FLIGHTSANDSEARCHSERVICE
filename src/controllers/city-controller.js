@@ -1,0 +1,104 @@
+const { CityService } = require('../services/index');
+const cityService = new CityService();
+
+const create = async (req, res) => {
+    try {
+        const city = await cityService.createCity(req.body);
+        return res.status(201).json({
+            success: true,
+            message: "Successfully created a city",
+            data: city,
+            err: {}
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while creating city",
+            data: {},
+            err: error
+        });
+    }
+};
+
+const get = async (req, res) => {
+    try {
+        const cityId = req.params.id;
+        const city = await cityService.getCity(cityId);
+        return res.status(200).json({
+            success: true,
+            message: "Successfully fetched a city",
+            data: city,
+            err: {}
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while fetching city",
+            data: {},
+            err: error
+        });
+    }
+};
+
+const destroy = async (req, res) => {
+    try {
+        const cityId = req.params.id;
+        await cityService.deleteCity(cityId);
+        return res.status(200).json({
+            success: true,
+            message: "Successfully deleted the city",
+            data: {},
+            err: {}
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while deleting city",
+            data: {},
+            err: error
+        });
+    }
+};
+
+const update = async (req, res) => {
+    try {
+        const cityId = req.params.id;
+        const city = await cityService.updateCity(cityId, req.body);
+        return res.status(200).json({
+            success: true,
+            message: "Successfully updated the city",
+            data: city,
+            err: {}
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while updating city",
+            data: {},
+            err: error
+        });
+    }
+};
+
+const getAll = async (req, res) => {
+    try {
+        const cities = await cityService.getAllCities();
+        return res.status(200).json({
+            success: true,
+            message: "Successfully fetched all cities",
+            data: cities,
+            err: {}
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while fetching cities",
+            data: {},
+            err: error
+        });
+    }
+};
+
+module.exports = {
+   create, get, destroy, update, getAll 
+  }; 
