@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 require('./config/serverConfig');
 const {City} = require('./models/index');
 const serverConfig = require('./config/serverConfig');
+const apiRoutes = require('./routes/index');
 
 const cityRepository = require('./repository/city-repo'); 
 const setupAndStartServer = async () => {
@@ -12,6 +13,8 @@ const setupAndStartServer = async () => {
   // middleware to parse JSON and URL-encoded data
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
+
+  app.use('/api', apiRoutes);
 
   const port = serverConfig.PORT;
   app.listen(port, () => {
