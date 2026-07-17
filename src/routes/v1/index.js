@@ -36,4 +36,11 @@ router.get('/airplane/:id', AirplaneController.get);
 router.patch('/airplane/:id', AirplaneController.update);
 router.delete('/airplane/:id', AirplaneController.destroy);
 
+
+
+// middlewares
+const { validateCreateFlight } = require('../../middlewares/flight-middlewares');
+
+router.post('/flight', validateCreateFlight, FlightController.create);
+
 module.exports = router;

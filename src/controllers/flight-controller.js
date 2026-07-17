@@ -1,20 +1,32 @@
 const { FlightService } = require('../services/index');
+const { SuccessCodes, ServerErrorCodes } = require('../utils/error-codes');
+
 const flightService = new FlightService();
 
 const create = async (req, res) => {
     try {
-        const flight = await flightService.create(req.body);
-        return res.status(201).json({
-            success: true,
-            message: "Successfully created a flight",
+        const flightRequestData = {
+            flightNumber: req.body.flightNumber,
+            airplaneId: req.body.airplaneId,
+            departureAirportId: req.body.departureAirportId,
+            arrivalAirportId: req.body.arrivalAirportId,
+            arrivalTime: req.body.arrivalTime,
+            departureTime: req.body.departureTime,
+            price: req.body.price
+        }
+        const flight = await flightService.create(flightRequestData);
+        return res.status(SuccessCodes.CREATED).json({
             data: flight,
-            err: {}
+            success: true,
+            err: {},
+            message: 'Successfully created a flight'
         });
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Something went wrong while creating flight",
+        console.log(error);
+        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
             data: {},
+            success: false,
+            message: 'Not able to create a flight',
             err: error
         });
     }
@@ -24,14 +36,14 @@ const get = async (req, res) => {
     try {
         const flightId = req.params.id;
         const flight = await flightService.get(flightId);
-        return res.status(200).json({
+        return res.status(SuccessCodes.OK).json({
             success: true,
             message: "Successfully fetched a flight",
             data: flight,
             err: {}
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "Something went wrong while fetching flight",
             data: {},
@@ -43,14 +55,14 @@ const get = async (req, res) => {
 const getAll = async (req, res) => {
     try {
         const flights = await flightService.getAll();
-        return res.status(200).json({
+        return res.status(SuccessCodes.OK).json({
             success: true,
             message: "Successfully fetched all flights",
             data: flights,
             err: {}
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "Something went wrong while fetching flights",
             data: {},
@@ -63,14 +75,14 @@ const destroy = async (req, res) => {
     try {
         const flightId = req.params.id;
         await flightService.destroy(flightId);
-        return res.status(200).json({
+        return res.status(SuccessCodes.OK).json({
             success: true,
             message: "Successfully deleted the flight",
             data: {},
             err: {}
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "Something went wrong while deleting flight",
             data: {},
@@ -83,14 +95,14 @@ const update = async (req, res) => {
     try {
         const flightId = req.params.id;
         const flight = await flightService.update(flightId, req.body);
-        return res.status(200).json({
+        return res.status(SuccessCodes.OK).json({
             success: true,
             message: "Successfully updated the flight",
             data: flight,
             err: {}
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "Something went wrong while updating flight",
             data: {},
@@ -102,14 +114,14 @@ const update = async (req, res) => {
 const getFlights = async (req, res) => {
     try {
         const flights = await flightService.getFlights(req.query);
-        return res.status(200).json({
+        return res.status(SuccessCodes.OK).json({
             success: true,
             message: "Successfully fetched flights",
             data: flights,
             err: {}
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "Something went wrong while fetching flights",
             data: {},
