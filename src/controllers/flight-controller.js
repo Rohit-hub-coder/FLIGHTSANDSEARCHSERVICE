@@ -3,7 +3,7 @@ const flightService = new FlightService();
 
 const create = async (req, res) => {
     try {
-        const flight = await flightService.createFlight(req.body);
+        const flight = await flightService.create(req.body);
         return res.status(201).json({
             success: true,
             message: "Successfully created a flight",
@@ -23,7 +23,7 @@ const create = async (req, res) => {
 const get = async (req, res) => {
     try {
         const flightId = req.params.id;
-        const flight = await flightService.getFlight(flightId);
+        const flight = await flightService.get(flightId);
         return res.status(200).json({
             success: true,
             message: "Successfully fetched a flight",
@@ -42,7 +42,7 @@ const get = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const flights = await flightService.getAllFlights();
+        const flights = await flightService.getAll();
         return res.status(200).json({
             success: true,
             message: "Successfully fetched all flights",
@@ -62,7 +62,7 @@ const getAll = async (req, res) => {
 const destroy = async (req, res) => {
     try {
         const flightId = req.params.id;
-        await flightService.deleteFlight(flightId);
+        await flightService.destroy(flightId);
         return res.status(200).json({
             success: true,
             message: "Successfully deleted the flight",
@@ -82,7 +82,7 @@ const destroy = async (req, res) => {
 const update = async (req, res) => {
     try {
         const flightId = req.params.id;
-        const flight = await flightService.updateFlight(flightId, req.body);
+        const flight = await flightService.update(flightId, req.body);
         return res.status(200).json({
             success: true,
             message: "Successfully updated the flight",
@@ -99,4 +99,23 @@ const update = async (req, res) => {
     }
 };
 
-module.exports = { create, get, getAll, destroy, update };
+const getFlights = async (req, res) => {
+    try {
+        const flights = await flightService.getFlights(req.query);
+        return res.status(200).json({
+            success: true,
+            message: "Successfully fetched flights",
+            data: flights,
+            err: {}
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while fetching flights",
+            data: {},
+            err: error
+        });
+    }
+};
+
+module.exports = { create, get, getAll, destroy, update, getFlights };

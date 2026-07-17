@@ -1,19 +1,49 @@
 const { Op } = require('sequelize');
-const { Flight, Airplane, Airport, City } = require('../models/index');
+const CrudRepository = require('./crud-repo');
+const { Flight } = require('../models/index');
 
-class FlightRepository {
-
-    async createFlight(data) {
-        try {
-            const flight = await Flight.create(data);
-            return flight;
-        } catch (error) {
-            console.log("Something went wrong in the repository layer");
-            throw {error};
-        }
+class FlightRepository extends CrudRepository {
+    constructor() {
+        super(Flight);
     }
 
-    async getFlight(flightId) {
+    #createFilter(data) {
+        let filter = {};
+
+        if (data.departureAirportId) {
+            filter.departureAirportId = data.departureAirportId;
+        }
+        if (data.arrivalAirportId) {
+            filter.arrivalAirportId = data.arrivalAirportId;
+        }
+
+        let priceFilter = [];
+        if (data.minPrice) {
+            priceFilter.push({ price: { [Op.gte]: data.minPrice } });
+        }
+        if (data.maxPrice) {
+            priceFilter.push({ price: { [Op.lte]: data.maxPrice } });
+        }
+        if (priceFilter.length > 0) {
+            Object.assign(filter, { [Op.and]: priceFilter });
+        }
+
+        if (data.departureDate) {
+            const startDate = new Date(data.departureDate);
+            const endDate = new Date(data.departureDate);
+            endDate.setDate(endDate.getDate() + 1);
+            filter.departureTime = {
+                [Op.gte]: startDate,
+                [Op.lt]: endDate
+            };
+        }
+
+        return filter;
+    }
+
+    // Base class ka get() sirf ID se dhoondhta hai, associations include nahi karta
+    // Flight ke liye humein airplane/airport ka data bhi chahiye, isliye override kiya
+    async get(flightId) {
         try {
             const flight = await Flight.findByPk(flightId, {
                 include: [
@@ -29,60 +59,11 @@ class FlightRepository {
         }
     }
 
-    async getAllFlights() {
+    async getFlights(filterData) {
         try {
-            const flights = await Flight.findAll({
-                include: [
-                    { association: 'airplane' },
-                    { association: 'departureAirport' },
-                    { association: 'arrivalAirport' }
-                ]
-            });
-            return flights;
-        } catch (error) {
-            console.log("Something went wrong in the repository layer");
-            throw {error};
-        }
-    }
-
-    async destroyFlight(flightId) {
-        try {
-            await Flight.destroy({
-                where: { id: flightId }
-            });
-            return true;
-        } catch (error) {
-            console.log("Something went wrong in the repository layer");
-            throw {error};
-        }
-    }
-
-    async updateFlight(flightId, data) {
-        try {
-            const flight = await Flight.findByPk(flightId);
-            await flight.update(data);
-            return flight;
-        } catch (error) {
-            console.log("Something went wrong in the repository layer");
-            throw {error};
-        }
-    }
-
-    async getFlights(filter) {
-        try {
-            const startDate = new Date(filter.departureDate);
-            const endDate = new Date(filter.departureDate);
-            endDate.setDate(endDate.getDate() + 1);
-
+            const filter = this.#createFilter(filterData);
             const response = await Flight.findAll({
-                where: {
-                    departureAirportId: filter.departureAirportId,
-                    arrivalAirportId: filter.arrivalAirportId,
-                    departureTime: {
-                        [Op.gte]: startDate,
-                        [Op.lt]: endDate
-                    }
-                },
+                where: filter,
                 include: [
                     { association: 'airplane' },
                     { association: 'departureAirport' },
