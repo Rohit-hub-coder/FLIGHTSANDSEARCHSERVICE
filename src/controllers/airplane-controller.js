@@ -3,7 +3,7 @@ const airplaneService = new AirplaneService();
 
 const create = async (req, res) => {
     try {
-        const airplane = await airplaneService.createAirplane(req.body);
+        const airplane = await airplaneService.create(req.body);
         return res.status(201).json({
             success: true,
             message: "Successfully created an airplane",
@@ -23,7 +23,7 @@ const create = async (req, res) => {
 const get = async (req, res) => {
     try {
         const airplaneId = req.params.id;
-        const airplane = await airplaneService.getAirplane(airplaneId);
+        const airplane = await airplaneService.get(airplaneId);
         return res.status(200).json({
             success: true,
             message: "Successfully fetched an airplane",
@@ -42,7 +42,7 @@ const get = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const airplanes = await airplaneService.getAllAirplanes();
+        const airplanes = await airplaneService.getAll();
         return res.status(200).json({
             success: true,
             message: "Successfully fetched all airplanes",
@@ -62,7 +62,7 @@ const getAll = async (req, res) => {
 const destroy = async (req, res) => {
     try {
         const airplaneId = req.params.id;
-        await airplaneService.deleteAirplane(airplaneId);
+        await airplaneService.destroy(airplaneId);
         return res.status(200).json({
             success: true,
             message: "Successfully deleted the airplane",
@@ -82,7 +82,7 @@ const destroy = async (req, res) => {
 const update = async (req, res) => {
     try {
         const airplaneId = req.params.id;
-        const airplane = await airplaneService.updateAirplane(airplaneId, req.body);
+        const airplane = await airplaneService.update(airplaneId, req.body);
         return res.status(200).json({
             success: true,
             message: "Successfully updated the airplane",
