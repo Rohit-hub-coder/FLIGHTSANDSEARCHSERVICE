@@ -15,6 +15,7 @@ const setupAndStartServer = async () => {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   app.use('/api', apiRoutes);
+  app.get('/api/v1/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
   const port = serverConfig.PORT;
   app.listen(port, () => {
