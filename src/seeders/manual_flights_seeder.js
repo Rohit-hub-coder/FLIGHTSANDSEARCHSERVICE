@@ -1,4 +1,4 @@
-const { Flight } = require('./src/models');
+const { Flight } = require('../models');
 async function seed() {
   const newFlights = [
     {
@@ -38,9 +38,12 @@ async function seed() {
 
   try {
     for (const flight of newFlights) {
-      await Flight.create(flight);
+      const existing = await Flight.findOne({ where: { flightNumber: flight.flightNumber } });
+      if (!existing) {
+        await Flight.create(flight);
+      }
     }
-    console.log('Seeded 3 new flights');
+    console.log('Seeded flights successfully');
   } catch (err) {
     console.error('Seeding error, possibly bad foreign keys, retrying with guaranteed airport IDs:', err.message);
     // Fallback: use departureAirportId: 1 and arrivalAirportId: 2 for all if others don't exist

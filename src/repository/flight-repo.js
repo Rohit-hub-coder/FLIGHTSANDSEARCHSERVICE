@@ -77,6 +77,36 @@ class FlightRepository extends CrudRepository {
             throw {error};
         }
     }
+
+    async update(flightId, data) {
+        try {
+            const flight = await Flight.findByPk(flightId);
+            if (!flight) {
+                throw { error: 'Flight not found' };
+            }
+            if (data.decrementSeats !== undefined) {
+                const seatsToDecrement = Number(data.decrementSeats);
+                if (data.reserveIfAvailable && flight.totalSeats < seatsToDecrement) {
+                    throw { error: 'Insufficient seats available' };
+                }
+                await flight.decrement('totalSeats', { by: seatsToDecrement });
+                await flight.reload();
+                return flight;
+            }
+            if (data.incrementSeats !== undefined) {
+                const seatsToIncrement = Number(data.incrementSeats);
+                await flight.increment('totalSeats', { by: seatsToIncrement });
+                await flight.reload();
+                return flight;
+            }
+            await Flight.update(data, { where: { id: flightId } });
+            await flight.reload();
+            return flight;
+        } catch (error) {
+            console.log("Something went wrong in the repository layer");
+            throw error;
+        }
+    }
 }
 
 module.exports = FlightRepository;
